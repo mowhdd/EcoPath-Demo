@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { APIProvider } from '@vis.gl/react-google-maps';
 import { NavigationTab, EducationalPin } from './types';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
-import { Footer } from './components/Footer';
-import { TownshipMap } from './components/TownshipMap';
+import { ElminaMap } from './components/ElminaMap';
+import { BottomNav } from './components/BottomNav';
 import { ClimateSensorsView } from './components/ClimateSensorsView';
 import { CanopyRoutePlannerView } from './components/CanopyRoutePlannerView';
 import { RewardsView } from './components/RewardsView';
@@ -50,7 +49,7 @@ export default function App() {
   };
 
   return (
-    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}>
+    <>
       <div className="min-h-screen bg-[#faf8ff] text-[#131b2e] flex flex-col font-sans selection:bg-[#85f8c4] selection:text-[#002114]">
         {/* Google Maps Platform Quota Banner */}
         {quotaExceeded && (
@@ -71,13 +70,7 @@ export default function App() {
         )}
 
         {/* Fixed Top Header */}
-        <Header
-          onOpenNotifications={() => showToast('Displaying 3 active civic micro-climate alerts.')}
-          onOpenProfile={() => setIsRewardsModalOpen(true)}
-          onOpenFilter={() => showToast('Display layer filters: High contrast & canopy mesh enabled.')}
-          onToggleMobileNav={() => setIsMobileNavOpen(!isMobileNavOpen)}
-          isMobileNavOpen={isMobileNavOpen}
-        />
+        <Header points={userPoints} onOpenProfile={() => setIsRewardsModalOpen(true)} />
 
         {/* Left Navigation Sidebar */}
         <Sidebar
@@ -93,15 +86,9 @@ export default function App() {
 
         {/* Main Screen Content Viewport */}
         <div className="lg:pl-72 flex flex-col flex-1 min-h-screen">
-          <main className="relative pt-16 pb-7 w-full bg-[#faf8ff] flex-1">
+          <main className="relative pt-16 pb-[4.5rem] lg:pb-0 w-full bg-[#faf8ff] flex-1">
             {currentTab === 'township-map' && (
-              <TownshipMap
-                onOpenEduModal={(pin) => setActiveEduPin(pin)}
-                onOpenReportModal={() => setIsReportModalOpen(true)}
-                onOpenRewardsModal={() => setIsRewardsModalOpen(true)}
-                userPoints={userPoints}
-                showToast={showToast}
-              />
+              <ElminaMap onOpenReportModal={() => setIsReportModalOpen(true)} onWalkComplete={(km) => { const pts = Math.round(km * 80); setUserPoints((p) => p + pts); showToast(`Walk complete: ${km.toFixed(1)} km. +${pts} Eco-Steps!`); }} />
             )}
 
             {currentTab === 'climate-sensors' && (
@@ -133,7 +120,7 @@ export default function App() {
         </div>
 
         {/* Fixed Bottom Telemetry Footer */}
-        <Footer />
+        <BottomNav currentTab={currentTab} onSelectTab={setCurrentTab} />
 
         {/* Interactive Modals */}
         <EduModal
@@ -163,6 +150,6 @@ export default function App() {
         {/* Toast Banner */}
         <Toast message={toastMessage} />
       </div>
-    </APIProvider>
+    </>
   );
 }

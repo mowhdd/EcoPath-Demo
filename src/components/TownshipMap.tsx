@@ -283,7 +283,7 @@ export const TownshipMap: React.FC<TownshipMapProps> = ({
 
   return (
     <div
-      className={`relative w-full h-[calc(100vh-5.75rem)] overflow-hidden select-none transition-colors duration-700 ${
+      className={`relative w-full h-[calc(100dvh-8.5rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden select-none transition-colors duration-700 ${
         isNightMode ? 'bg-[#131b2e]' : 'bg-[#faf8ff]'
       }`}
       id="township-viewport"
